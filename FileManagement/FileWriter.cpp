@@ -55,7 +55,7 @@ bool FileWriter::isOutOfMaxSize()
 
 int  FileWriter::openFile()
 {
-    itsFileHandle = open(itsFileName.c_str(), O_RDWR | O_CREAT);
+    itsFileHandle = open(itsFileName.c_str(), O_RDWR | O_CREAT, O_RDWR);
     if (itsFileHandle < 0)
     {
         fileJustClosed();
