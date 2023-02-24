@@ -1,0 +1,7 @@
+struct CameraStream
+{
+    uint64              time_stamp;
+    int32               buf_index;
+    sequence<char>      message;
+    float               fps;
+};

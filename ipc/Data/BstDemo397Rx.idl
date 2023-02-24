@@ -1,0 +1,7 @@
+struct BstDemo397Rx
+{
+    char HighBeamReq;
+    char WiperRequ;
+    char DoorsLockReq;
+    char FLDMControl;
+};

@@ -1,0 +1,7 @@
+struct BstDemo397Tx
+{
+    char HighBeamSt;
+    char FrontWiperSt;
+    char DriverDoorAjarSt;
+    char FLWinSt_G;
+};
