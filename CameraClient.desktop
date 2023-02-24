@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=CameraClient
+Exec=/usr/bin/CameraClient
+Icon=app
+Categories=Development;
+Terminal=false
