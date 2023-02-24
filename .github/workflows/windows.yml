@@ -66,18 +66,6 @@ jobs:
       targetName: CameraClient.exe
     # 步骤
     steps:
-      # 安装Qt
-      - name: Install Qt
-        # 使用外部action。这个action专门用来安装Qt
-        uses: jurplel/install-qt-action@v2
-        with:
-          # Version of Qt to install
-          version: ${{ matrix.qt_ver }}
-          # Target platform for build
-          # target: ${{ matrix.qt_target }}
-          arch: ${{ matrix.qt_arch }}
-          cached: 'false'
-          aqtversion: '==2.0.5'
       # 安装Fast-DDS
       #- name: Chocolatey Action
       #  uses: crazy-max/ghaction-chocolatey@v2.1.0
@@ -94,6 +82,7 @@ jobs:
       - name: Install Fast-DDS
         shell: cmd
         run: |
+          export LD_LIBRARY_PATH=C:\boost
           mkdir %USERPROFILE%\Fast-DDS
           cd %USERPROFILE%\Fast-DDS
           git clone https://github.com/eProsima/foonathan_memory_vendor.git
@@ -115,6 +104,18 @@ jobs:
           mkdir build && cd build
           cmake ..
           cmake --build . --target install
+      # 安装Qt
+      - name: Install Qt
+        # 使用外部action。这个action专门用来安装Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          # Version of Qt to install
+          version: ${{ matrix.qt_ver }}
+          # Target platform for build
+          # target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+          cached: 'false'
+          aqtversion: '==2.0.5'
       # 拉取代码
       - uses: actions/checkout@v2
         with:
@@ -125,7 +126,7 @@ jobs:
         shell: cmd
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" ${{ matrix.msvc_arch }}
-          cmake -H. build -D CMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=C:\boost
+          cmake -H. build -D CMAKE_BUILD_TYPE=Release
           cmake --build build
           echo winSdkDir=%WindowsSdkDir% >> %GITHUB_ENV%
           echo winSdkVer=%WindowsSdkVersion% >> %GITHUB_ENV%
