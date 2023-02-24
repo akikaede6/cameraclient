@@ -71,39 +71,42 @@ jobs:
       #  uses: crazy-max/ghaction-chocolatey@v2.1.0
       #- name: Googletest installer
       #  uses: MarkusJx/googletest-installer@v1.1.1
-      - name: Download and install Boost
-        uses: MarkusJx/install-boost@v2.4.3
-        id: install-boost
+      #- name: Download and install Boost
+      #  uses: MarkusJx/install-boost@v2.4.3
+      #  id: install-boost
+      #  with:
+      #    boost_version: 1.78.0
+      #    boost_install_dir: C:\boost
+      #    platform_version: 2019
+      #    toolset: msvc
+      - name: Chocolatey Action
+        uses: crazy-max/ghaction-chocolatey@v2.1.0
         with:
-          boost_version: 1.78.0
-          boost_install_dir: C:\boost
-          platform_version: 2019
-          toolset: msvc
+          args: install -y asio tinyxml2
       - name: Install Fast-DDS
         shell: cmd
         run: |
-          set PATH=%PATH%;C:\boost
           mkdir %USERPROFILE%\Fast-DDS
           cd %USERPROFILE%\Fast-DDS
           git clone https://github.com/eProsima/foonathan_memory_vendor.git
           cd foonathan_memory_vendor
           mkdir build && cd build
           cmake ..
-          cmake --build . --target install
+          cmake --build . --target install -j9
 
           cd %USERPROFILE%\Fast-DDS
           git clone https://github.com/eProsima/Fast-CDR.git
           cd Fast-CDR
           mkdir build && cd build
           cmake ..
-          cmake --build . --target install
+          cmake --build . --target install -j9
           cd %USERPROFILE%\Fast-DDS
 
           git clone https://github.com/eProsima/Fast-DDS.git
           cd Fast-DDS
           mkdir build && cd build
           cmake ..
-          cmake --build . --target install
+          cmake --build . --target install -j9
       # 安装Qt
       - name: Install Qt
         # 使用外部action。这个action专门用来安装Qt
