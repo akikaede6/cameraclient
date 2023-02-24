@@ -24,7 +24,7 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y qt5-default qtdeclarative5-dev cmake libqt5multimedia5
+          sudo apt-get install -y qt5-default qtdeclarative5-dev cmake qtmultimedia5-dev
       - name: install Fast-DDS
         run: |
           sudo apt install g++ python3-pip wget git libasio-dev libtinyxml2-dev
@@ -35,21 +35,21 @@ jobs:
           mkdir foonathan_memory_vendor/build
           cd foonathan_memory_vendor/build
           cmake .. -DBUILD_SHARED_LIBS=ON
-          sudo cmake --build . --target install
+          sudo cmake --build . --target install -j9
 
           cd ~/Fast-DDS
           git clone https://github.com/eProsima/Fast-CDR.git
           mkdir Fast-CDR/build
           cd Fast-CDR/build
           cmake ..
-          sudo cmake --build . --target install
+          sudo cmake --build . --target install -j9
 
           cd ~/Fast-DDS
           git clone https://github.com/eProsima/Fast-DDS.git
           mkdir Fast-DDS/build
           cd Fast-DDS/build
           cmake ..
-          sudo cmake --build . --target install
+          sudo cmake --build . --target install -j9
       - name: configure
         run: cmake -H. build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
       - name: build
