@@ -24,7 +24,7 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y qt5-default qtdeclarative5-dev cmake qtmultimedia5-dev ffmpeg
+          sudo apt-get install -y qt5-default qtdeclarative5-dev cmake qtmultimedia5-dev ffmpeg libavdevice-dev libavfilter-dev libavformat-dev libavcodec-dev libswresample-dev libswscale-dev libavutil-dev
       - name: install Fast-DDS
         run: |
           sudo apt install g++ python3-pip wget git libasio-dev libtinyxml2-dev
