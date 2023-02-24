@@ -24,7 +24,7 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y qt5-default qtdeclarative5-dev cmake
+          sudo apt-get install -y qt5-default qtdeclarative5-dev cmake libqt5multimedia5
       - name: install Fast-DDS
         run: |
           sudo apt install g++ python3-pip wget git libasio-dev libtinyxml2-dev
