@@ -82,7 +82,7 @@ jobs:
       - name: Install Fast-DDS
         shell: cmd
         run: |
-          export LD_LIBRARY_PATH=C:\boost
+          set PATH=%PATH%;C:\boost
           mkdir %USERPROFILE%\Fast-DDS
           cd %USERPROFILE%\Fast-DDS
           git clone https://github.com/eProsima/foonathan_memory_vendor.git
