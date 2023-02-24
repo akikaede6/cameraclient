@@ -79,16 +79,34 @@ jobs:
       #    boost_install_dir: C:\boost
       #    platform_version: 2019
       #    toolset: msvc
+      #- name: Get asio
+      #  uses: engineerd/configurator@v0.0.10
+      #  with:
+      #    name: asio.1.12.1.nupkg
+      #    url: "https://github.com/ros2/choco-packages/releases/download/2020-02-24/asio.1.12.1.nupkg"
       - name: Get asio
-        uses: engineerd/configurator@v0.0.10
+        uses: robinraju/release-downloader@v1.7
         with:
-          name: asio.1.12.1.nupkg
-          url: "https://github.com/ros2/choco-packages/releases/download/2020-02-24/asio.1.12.1.nupkg"
+          latest: true
+          repository: "ros2/choco-packages"
+          fileName: asio.1.12.1.nupkg
+      - name: test
+        run: |
+          Install-Package asio.1.12.1.nupkg
+      #- name: Get tinyxml
+      #  uses: engineerd/configurator@v0.0.10
+      #  with:
+      #    name: tinyxml2.6.0.0.nupkg
+      #    url: "https://github.com/ros2/choco-packages/releases/download/2020-02-24/tinyxml2.6.0.0.nupkg"
       - name: Get tinyxml
-        uses: engineerd/configurator@v0.0.10
+        uses: robinraju/release-downloader@v1.7
         with:
-          name: tinyxml2.6.0.0.nupkg
-          url: "https://github.com/ros2/choco-packages/releases/download/2020-02-24/tinyxml2.6.0.0.nupkg"
+          latest: true
+          repository: "ros2/choco-packages"
+          fileName: tinyxml2.6.0.0.nupkg
+      - name: test
+        run: |
+          Install-Package tinyxml2.6.0.0.nupkg
       - name: Chocolatey Action
         uses: crazy-max/ghaction-chocolatey@v2.1.0
         with:
