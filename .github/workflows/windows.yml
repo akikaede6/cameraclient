@@ -1,0 +1,153 @@
+name: Windows
+on:
+  # push代码时触发workflow
+  push:
+    paths:
+      - 'CMakeLists.txt'
+      - 'ui/**'
+      - 'ipc/**'
+      - 'ci/**'
+      - '.github/workflows/windows.yml'
+  pull_request:
+    paths:
+      - 'CMakeLists.txt'
+      - 'ui/**'
+      - 'ipc/**'
+      - 'ci/**'
+      - '.github/workflows/windows.yml'
+jobs:
+  build:
+    name: Build
+    # 运行平台， windows-latest目前是windows server 2019
+    # 参考文档 https://github.com/actions/virtual-environments/blob/main/images/win/Windows2019-Readme.md
+    runs-on: windows-2019
+    strategy:
+      # 矩阵配置
+      matrix:
+        include:
+          # 5.9.9 参考 https://mirrors.cloud.tencent.com/qt/online/qtsdkrepository/windows_x86/desktop/qt5_599/
+          #- qt_ver: 5.9.9
+          #  qt_arch: win32_msvc2015
+          #  msvc_arch: x86
+          #  qt_arch_install: msvc2015
+          #- qt_ver: 5.9.9
+          #  qt_arch: win64_msvc2017_64
+          #  msvc_arch: x64
+          #  qt_arch_install: msvc2017_64
+          ## 5.12.10 参考 https://mirrors.cloud.tencent.com/qt/online/qtsdkrepository/windows_x86/desktop/qt5_51210/
+          #- qt_ver: 5.12.10
+          #  qt_arch: win32_msvc2017
+          #  msvc_arch: x86
+          #  qt_arch_install: msvc2017
+          #- qt_ver: 5.12.10
+          #  qt_arch: win64_msvc2017_64
+          #  msvc_arch: x64
+          #  qt_arch_install: msvc2017_64
+          # 5.15.2 参考 https://mirrors.cloud.tencent.com/qt/online/qtsdkrepository/windows_x86/desktop/qt5_5152/
+          #- qt_ver: 5.15.2
+          #  qt_arch: win32_msvc2019
+          #  msvc_arch: x86
+          #  qt_arch_install: msvc2019
+          - qt_ver: 5.15.2
+            qt_arch: win64_msvc2019_64
+            msvc_arch: x64
+            qt_arch_install: msvc2019_64
+          # 6.0.0 参考 https://mirrors.cloud.tencent.com/qt/online/qtsdkrepository/windows_x86/desktop/qt6_600/
+          #- qt_ver: 6.0.0
+          #  qt_arch: win64_msvc2019_64
+          #  msvc_arch: x64
+          #  qt_arch_install: msvc2019_64
+          ## 6.2.2
+          #- qt_ver: 6.2.2
+          #  qt_arch: win64_msvc2019_64
+          #  msvc_arch: x64
+          #  qt_arch_install: msvc2019_64
+    env:
+      targetName: CameraClient.exe
+    # 步骤
+    steps:
+      # 安装Qt
+      - name: Install Qt
+        # 使用外部action。这个action专门用来安装Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          # Version of Qt to install
+          version: ${{ matrix.qt_ver }}
+          # Target platform for build
+          # target: ${{ matrix.qt_target }}
+          arch: ${{ matrix.qt_arch }}
+          cached: 'false'
+          aqtversion: '==2.0.5'
+      # 安装Fast-DDS
+      #- name: Chocolatey Action
+      #  uses: crazy-max/ghaction-chocolatey@v2.1.0
+      #- name: Googletest installer
+      #  uses: MarkusJx/googletest-installer@v1.1.1
+      - name: Install Fast-DDS
+        shell: cmd
+        run: |
+          mkdir %USERPROFILE%\Fast-DDS
+          cd %USERPROFILE%\Fast-DDS
+          git clone https://github.com/eProsima/foonathan_memory_vendor.git
+          cd foonathan_memory_vendor
+          mkdir build && cd build
+          cmake ..
+          cmake --build . --target install
+
+          cd %USERPROFILE%\Fast-DDS
+          git clone https://github.com/eProsima/Fast-CDR.git
+          cd Fast-CDR
+          mkdir build && cd build
+          cmake ..
+          cmake --build . --target install
+          cd %USERPROFILE%\Fast-DDS
+
+          git clone https://github.com/eProsima/Fast-DDS.git
+          cd Fast-DDS
+          mkdir build && cd build
+          cmake ..
+          cmake --build . --target install
+      # 拉取代码
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      # msvc编译
+      - name: msvc-build
+        id: build
+        shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" ${{ matrix.msvc_arch }}
+          cmake -H. build -D CMAKE_BUILD_TYPE=Release
+          cmake --build build
+          echo winSdkDir=%WindowsSdkDir% >> %GITHUB_ENV%
+          echo winSdkVer=%WindowsSdkVersion% >> %GITHUB_ENV%
+          echo vcToolsInstallDir=%VCToolsInstallDir% >> %GITHUB_ENV%
+          echo vcToolsRedistDir=%VCToolsRedistDir% >> %GITHUB_ENV%
+      # 打包
+      - name: package
+        id: package
+        env:
+          archiveName: CameraClient-${{ matrix.qt_ver }}-${{ matrix.qt_target }}-${{ matrix.qt_arch }}
+          msvcArch: ${{ matrix.msvc_arch }}
+        shell: pwsh
+        run: |
+          & ci\windows-publish.ps1 ${env:archiveName} ${env:targetName}
+          # 记录packageName给后续step
+           $name = ${env:archiveName}
+           echo "::set-output name=packageName::$name"
+      # tag 查询github-Release
+      # 上传artifacts
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.package.outputs.packageName }}-${{ github.run_id }}
+          path: ${{ steps.package.outputs.packageName }}
+      # tag 上传Release
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.package.outputs.packageName }}.zip
+          asset_name: CameraClient-${{ github.ref_name }}-msvc.zip
+          tag: ${{ github.ref }}
+          overwrite: true
