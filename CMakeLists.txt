@@ -68,6 +68,7 @@ set(PROJECT_SOURCES
         FileManagement/FileManager.h
         FileManagement/FileWriter.cpp
         FileManagement/FileWriter.h
+        CameraClient.desktop
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -112,3 +113,5 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 add_subdirectory(ipc/DDS)
+install(TARGETS CameraClient DESTINATION bin)
+install(FILES CameraClient.desktop DESTINATION share/applications)

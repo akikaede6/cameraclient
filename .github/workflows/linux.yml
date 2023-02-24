@@ -16,7 +16,6 @@ on:
 
 jobs:
   build-appimage:
-
     runs-on: ubuntu-18.04
 
     steps:
