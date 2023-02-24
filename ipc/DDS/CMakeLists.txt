@@ -6,10 +6,7 @@ file(GLOB SUBSCRIBER ${CMAKE_CURRENT_SOURCE_DIR}/DdsSubscriber/src/*.cpp)
 file(GLOB SUBSCRIBERQOS ${CMAKE_CURRENT_SOURCE_DIR}/DdsSubscriber/src/QosUnion/*.cpp)
 
 # Find requirements
-find_package(fastcdr REQUIRED)
-find_package(fastrtps REQUIRED)
-
-add_library(${PROJECT_NAME} 
+add_library(${PROJECT_NAME}
         ${SUBSCRIBER}
         ${SUBSCRIBERQOS}
 )

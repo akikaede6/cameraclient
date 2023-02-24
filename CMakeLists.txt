@@ -23,6 +23,9 @@ pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
     libavutil
 )
 
+find_package(fastcdr REQUIRED)
+find_package(fastrtps REQUIRED)
+
 set(PROJECT_SOURCES
         main.cpp
         ui/mainwindow.cpp
@@ -115,3 +118,6 @@ endif()
 add_subdirectory(ipc/DDS)
 install(TARGETS CameraClient DESTINATION bin)
 install(FILES CameraClient.desktop DESTINATION share/applications)
+install(TARGETS PkgConfig DESTINATION lib)
+install(TARGETS fastcdr DESTINATION lib)
+install(TARGETS fastrtps DESTINATION lib)

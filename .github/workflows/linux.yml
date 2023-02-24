@@ -13,7 +13,6 @@ on:
       - 'ci/**'
       - '.github/workflows/linux.yml'
 
-
 jobs:
   build-appimage:
     runs-on: ubuntu-18.04
