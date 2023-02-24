@@ -35,21 +35,21 @@ jobs:
           mkdir foonathan_memory_vendor/build
           cd foonathan_memory_vendor/build
           cmake .. -DBUILD_SHARED_LIBS=ON
-          cmake --build . --target install
+          sudo cmake --build . --target install
 
           cd ~/Fast-DDS
           git clone https://github.com/eProsima/Fast-CDR.git
           mkdir Fast-CDR/build
           cd Fast-CDR/build
           cmake ..
-          cmake --build . --target install
+          sudo cmake --build . --target install
 
           cd ~/Fast-DDS
           git clone https://github.com/eProsima/Fast-DDS.git
           mkdir Fast-DDS/build
           cd Fast-DDS/build
           cmake ..
-          cmake --build . --target install
+          sudo cmake --build . --target install
       - name: configure
         run: cmake -H. build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
       - name: build
